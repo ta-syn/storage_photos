@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo & Video Storage - Stranger Things Theme</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1b1b2f;
+            color: #eeeeee;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: #0f0f17;
+            color: #d72638;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            font-family: 'Stranger Things', serif;
+        }
+
+        .login-container, .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-card {
+            background: #161623;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+            width: 350px;
+            text-align: center;
+        }
+
+        .login-card h2 {
+            font-size: 1.8rem;
+            color: #d72638;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #1b1b2f;
+            color: #eeeeee;
+        }
+
+        .login-card button {
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 1rem;
+            background-color: #d72638;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .login-card button:hover {
+            background-color: #c2172e;
+        }
+
+        .main-container {
+            flex-direction: column;
+            padding: 2rem;
+        }
+
+        .upload-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .upload-section h2 {
+            font-size: 1.8rem;
+            color: #d72638;
+        }
+
+        .upload-section input {
+            display: block;
+            margin: 1rem auto;
+            padding: 0.6rem;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .gallery-item {
+            position: relative;
+            background: #161623;
+            border-radius: 8px;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5);
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+        .gallery img, .gallery video {
+            max-width: 200px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .gallery-item button {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background-color: #d72638;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .gallery-item button:hover {
+            background-color: #c2172e;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #161623;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            color: #eeeeee;
+        }
+
+        .modal img, .modal video {
+            max-width: 90%;
+            margin-bottom: 1rem;
+        }
+
+        .modal button {
+            padding: 0.5rem 1rem;
+            background: #d72638;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal button:hover {
+            background: #c2172e;
+        }
+
+        footer {
+            background-color: #0f0f17;
+            color: #d72638;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Photo & Video Storage</h1>
+    </header>
+
+    <!-- Login Section -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-card">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button id="loginBtn">Login</button>
+            <p id="loginMessage"></p>
+            <p>Don't have an account? <a href="#" id="registerLink" style="color: #d72638;">Register</a></p>
+        </div>
+    </div>
+
+    <!-- Registration Section -->
+    <div class="login-container" id="registrationContainer" style="display: none;">
+        <div class="login-card">
+            <h2>Register</h2>
+            <input type="text" id="regUsername" placeholder="Username">
+            <input type="password" id="regPassword" placeholder="Password">
+            <button id="registerBtn">Register</button>
+            <p id="registerMessage"></p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container" id="mainContent" style="display: none;">
+        <div class="upload-section">
+            <h2>Upload Your Photos & Videos</h2>
+            <input type="file" id="fileUpload" multiple accept="image/*,video/*">
+            <button onclick="handleUpload()">Upload</button>
+        </div>
+        <div class="gallery" id="fileGallery"></div>
+    </div>
+
+    <!-- Modal for file details -->
+    <div class="modal" id="fileModal">
+        <div class="modal-content" id="modalContent">
+            <img id="modalImage" style="display: none;">
+            <video id="modalVideo" controls style="display: none;"></video>
+            <p id="fileDetails"></p>
+            <button onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Photo & Video Storage. Inspired by Stranger Things.</p>
+    </footer>
+
+    <script>
+        const loginBtn = document.getElementById('loginBtn');
+        const registerLink = document.getElementById('registerLink');
+        const registerBtn = document.getElementById('registerBtn');
+        const loginContainer = document.getElementById('loginContainer');
+        const registrationContainer = document.getElementById('registrationContainer');
+        const mainContent = document.getElementById('mainContent');
+        const fileGallery = document.getElementById('fileGallery');
+        const fileModal = document.getElementById('fileModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalVideo = document.getElementById('modalVideo');
+        const fileDetails = document.getElementById('fileDetails');
+
+        let users = JSON.parse(localStorage.getItem('users')) || {};
+        let uploadedFiles = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
+
+        // Login
+        loginBtn.addEventListener('click', () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const message = document.getElementById('loginMessage');
+
+            if (users[username] === password) {
+                loginContainer.style.display = 'none';
+                mainContent.style.display = 'block';
+            } else {
+                message.textContent = 'Invalid username or password.';
+                message.style.color = '#d72638';
+            }
+        });
+
+        // Register
+        registerLink.addEventListener('click', () => {
+            registrationContainer.style.display = 'flex';
+            loginContainer.style.display = 'none';
+        });
+
+        registerBtn.addEventListener('click', () => {
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const message = document.getElementById('registerMessage');
+
+            if (username && password) {
+                if (!users[username]) {
+                    users[username] = password;
+                    localStorage.setItem('users', JSON.stringify(users));
+                    message.textContent = 'Registration successful! Please log in.';
+                    message.style.color = 'green';
+                    registrationContainer.style.display = 'none';
+                    loginContainer.style.display = 'flex';
+                } else {
+                    message.textContent = 'Username already exists.';
+                    message.style.color = 'red';
+                }
+            } else {
+                message.textContent = 'Please fill out all fields.';
+                message.style.color = 'red';
+            }
+        });
+
+        // File Upload
+        function handleUpload() {
+            const fileInput = document.getElementById('fileUpload');
+
+            Array.from(fileInput.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    uploadedFiles.push({
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        url: event.target.result
+                    });
+
+                    localStorage.setItem('uploadedFiles', JSON.stringify(uploadedFiles));
+                    renderGallery();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+    // Load uploaded files from localStorage when the page loads
+    uploadedFiles = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
+    renderGallery();
+});
+
+// Render Gallery
+function renderGallery() {
+    fileGallery.innerHTML = '';
+    uploadedFiles.forEach((file, index) => {
+        const container = document.createElement('div');
+        container.className = 'gallery-item';
+
+        const fileElement = document.createElement(file.type.startsWith('image/') ? 'img' : 'video');
+        fileElement.src = file.url;
+        fileElement.controls = file.type.startsWith('video/');
+        fileElement.onclick = () => showDetails(file);
+        container.appendChild(fileElement);
+
+        const downloadBtn = document.createElement('button');
+        downloadBtn.textContent = 'Download';
+        downloadBtn.onclick = () => downloadFile(file);
+        container.appendChild(downloadBtn);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.onclick = () => deleteFile(index);
+        container.appendChild(deleteBtn);
+
+        fileGallery.appendChild(container);
+    });
+}
+
+
+        // Show File Details
+        function showDetails(file) {
+            modalImage.style.display = file.type.startsWith('image/') ? 'block' : 'none';
+            modalVideo.style.display = file.type.startsWith('video/') ? 'block' : 'none';
+
+            if (file.type.startsWith('image/')) {
+                modalImage.src = file.url;
+            } else {
+                modalVideo.src = file.url;
+            }
+
+            fileDetails.textContent = `Name: ${file.name}, Size: ${file.size} bytes, Type: ${file.type}`;
+            fileModal.style.display = 'flex';
+        }
+
+        // Close Modal
+        function closeModal() {
+            fileModal.style.display = 'none';
+        }
+
+        // Download File
+        function downloadFile(file) {
+            const a = document.createElement('a');
+            a.href = file.url;
+            a.download = file.name;
+            a.click();
+        }
+
+        // Delete File
+        function deleteFile(index) {
+            uploadedFiles.splice(index, 1);
+            localStorage.setItem('uploadedFiles', JSON.stringify(uploadedFiles));
+            renderGallery();
+        }
+
+        // Initial Render
+        renderGallery();
+    </script>
+</body>
+</html>
+
+
+
+
